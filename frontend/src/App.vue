@@ -14,14 +14,14 @@
       </v-input>
       <v-spacer></v-spacer>
       <div id="navbar">
-        <router-link class="nav-link" :to="{ name : 'index' }" exact>
+        <router-link class="nav-link" :to="{ name : 'Main' }" exact>
           <v-btn class="nav-btn">
-            버튼으로 대체
+            메인
           </v-btn>
         </router-link>
-        <router-link class="nav-link" :to="{ name : 'arts' }" exact>
+        <router-link class="nav-link" :to="{ name : 'UploadPicture' }" exact>
           <v-btn class="nav-btn">
-            호로로롤
+            업로드
           </v-btn>
         </router-link>
       </div>
