@@ -43,7 +43,7 @@ data: () => ({
 </script>
 
 <style scoped>
-a {
+/* a {
   text-decoration: none;
 }
 
@@ -83,6 +83,6 @@ a {
     color: white;
     font-size: 1rem;
   }
-}
+} */
 
 </style>

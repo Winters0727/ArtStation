@@ -23,11 +23,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
 // CORS policy
-app.use(cors({
-  origin: true,
-  credentials: true
-}));
+var corsOptions = {
+  origin: '*',
+  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+}
+app.use(cors(corsOptions));
 
 app.use('/api/users', usersRouter);
 app.use('/api/pictures', picturesRouter);

@@ -12,7 +12,7 @@ const pictureSchema = new Schema({
     },
     picGenre : {
         type : Array,
-        default : [],
+        default : ['없음'],
     },
     picArtist : {
         type : String,
