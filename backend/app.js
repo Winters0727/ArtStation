@@ -5,6 +5,8 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var cors = require('cors');
 const mongoose = require('mongoose');
+var fs = require('fs');
+var multer = require('multer');
 
 var usersRouter = require('./routes/users');
 var picturesRouter = require('./routes/pictures');
@@ -23,6 +25,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/uploaded', express.static(path.join(__dirname, 'pictures')));
 
 // CORS policy
 var corsOptions = {
@@ -30,6 +33,38 @@ var corsOptions = {
   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }
 app.use(cors(corsOptions));
+
+const picturePath = path.join(__dirname, 'pictures');
+
+let upload = multer({
+  storage: multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, path.join(picturePath, req.body['picArtist']));
+    },
+    filename: function (req, file, cb) {
+      cb(null, req.body['picTitle'] + new Date().valueOf() + path.extname(file.originalname));
+    }
+  }),
+});
+
+app.post('/api/pictures', upload.single('picImage'), function(req, res) {
+  const data = req.body;
+  fs.readdir(picturePath, (err, files) => {
+    if (err) res.status(500).json({'error' : err});
+
+    if (!files.includes(data['picArtist'])) {
+      fs.mkdir(path.join(picturePath, data['picArtist']), (err) => {
+        if (err) res.status(500).json({'error' : err});
+      });
+    }
+  });
+
+  fs.readdir(path.join(picturePath, data['picArtist']), (err, files) => {
+    res.status(200).json({...req.body, 
+      filePath : path.join('http://localhost:8000/uploaded/', req.body['picArtist'], files[files.length-1])
+    });
+  })
+})
 
 app.use('/api/users', usersRouter);
 app.use('/api/pictures', picturesRouter);

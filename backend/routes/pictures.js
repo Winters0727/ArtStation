@@ -6,9 +6,8 @@ var router = express.Router();
 const Picture = require('../models/picture');
 
 // 그림 생성
-router.post('/', function(req, res, next) {
-  console.log(req.body);
-  res.send(req.body);
+// router.post('/', function(req, res, next) {
+//   res.send('성공');
   // const data = req.body;
   // const picturePath = path.join(__dirname, '..', 'pictures');
   // fs.readdir(picturePath, (err, files) => {
@@ -36,7 +35,7 @@ router.post('/', function(req, res, next) {
     // }).catch((err) => {
     //   res.status(500).json({"error" : err});
     // });
-  });
+  // });
 
 // 그림 업데이트
 router.put('/', function(req, res, next) {
@@ -67,12 +66,12 @@ router.get('/option', function(req, res, next) {
   });
 
 // 모든 그림 가져오기
-router.get('/', function(req, res, next) {
-    Picture.find().then((characters) => {
-        res.status(200).json(characters);
-    }).catch((err) => {
-        res.status(500).json({"error" : err});
-      });
-    });
+// router.get('/', function(req, res, next) {
+//     Picture.find().then((characters) => {
+//         res.status(200).json(characters);
+//     }).catch((err) => {
+//         res.status(500).json({"error" : err});
+//       });
+//     });
 
 module.exports = router;
