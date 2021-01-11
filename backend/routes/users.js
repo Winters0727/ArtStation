@@ -4,6 +4,7 @@ const User = require('../models/user');
 const { hashPassword } = require('../utils/index');
 
 // 유저 회원가입
+// 유저 등록시에 pictures 하위에 폴더를 생성해야함.
 router.post('/', async function(req, res, next) {
   let userInfo = req.body;
   const hash = await hashPassword(userInfo.userPassword);

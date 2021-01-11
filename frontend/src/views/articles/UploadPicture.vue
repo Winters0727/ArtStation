@@ -41,19 +41,8 @@
                 </div>
             </v-col>
             <v-col cols=12>
-                <div id="result">
-                    <img
-                      width="10%"
-                      height="10%"
-                      id="resImage"
-                      v-show="picRes !== null"
-                      :src="picRes" />
-                      <a
-                      v-show="picRes !== null"
-                      :href="picRes"
-                      @click="downloadPic">
-                      다운로드
-                      </a>
+                <div id="resResult">
+                    
                 </div>
             </v-col>
         </v-row>
@@ -69,7 +58,7 @@
 </template>
 
 <script>
-import axios from 'axios'
+import { mapActions } from 'vuex'
 
 export default {
     name : 'UploadPicture',
@@ -88,6 +77,8 @@ export default {
         }
     },
     methods : {
+        ...mapActions(['uploadPicture', 'getPictures']),
+
         submitPic : async function(e) {
             e.preventDefault();
             e.stopPropagation();
@@ -96,12 +87,14 @@ export default {
             payload.append('picContext', '테스트입니다.');
             payload.append('picArtist', 'winters');
             payload.append('picImage', this.picFile);
-            await axios.post('http://localhost:8000/api/pictures', payload)
-            .then(res => {
-              let data = res.data;
-              this.picRes = data['filePath'];
-            })
-            .catch(err => console.log(err));
+
+            const data = await this.$store.dispatch('uploadPicture', payload);
+            console.log(data);
+            this.picRes = data['filePath'];
+            const resResult = document.getElementById('resResult');
+            const resImage = document.createElement('img');
+            resImage.src = `${process.env.VUE_APP_BACKEND_URL}/storage/${this.picRes}`;
+            resResult.appendChild(resImage);
         },
         changeFile : function(e) {
           this.picFile = e;
@@ -114,7 +107,7 @@ export default {
         downloadPic : function(e) {
             e.target.download = this.picSrc.name;
         }
-    },
+    }
 }
 </script>
 

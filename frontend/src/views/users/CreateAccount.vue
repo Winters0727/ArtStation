@@ -1,15 +1,15 @@
 <template>
   <div>
-      
+
   </div>
 </template>
 
 <script>
 export default {
-    name : 'Main',
+    name : 'CreateAccount',
     data() {
         return {
-
+            
         }
     }
 }

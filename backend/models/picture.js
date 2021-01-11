@@ -18,6 +18,14 @@ const pictureSchema = new Schema({
         type : String,
         required : true,
     },
+    filePath : {
+        type : String,
+        required : true,
+    },
+    clickCount : {
+        type : Number,
+        default : 0,
+    },
     createAt : {
         type : Date,
         default : Date.now(),

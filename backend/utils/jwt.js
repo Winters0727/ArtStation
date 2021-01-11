@@ -16,8 +16,8 @@ const verifyToken = function(inputToken, inputRefreshToken) {
     } catch { // JWT 토큰 검증에 실패했다면
         try {
             const result = jwt.verify(inputRefreshToken, process.env.JWT_REFRESH_SECRET); // 리프레시 토큰을 검증
-            const { _id, kakaoEmail, userNickname} = result;
-            const payload = { "_id" : _id, "kakaoEmail" : kakaoEmail, "userNickname" : userNickname}; // 리프레시 토큰 결과로 페이로드를 만들고
+            const { _id, userEmail, userNickname} = result;
+            const payload = { "_id" : _id, "userEmail" : userEmail, "userNickname" : userNickname}; // 리프레시 토큰 결과로 페이로드를 만들고
             const { token, refreshToken } = createToken(payload) // 토큰 생성 및 반환
             return { "result" : result, "token" : token, "refreshToken" : refreshToken}
         } catch {

@@ -1,28 +1,28 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import ArticleRouter from '@/router/articles'
+import UserRouter from '@/router/users'
 
-import Main from '../views/Main.vue'
-import UploadPicture from '@/components/uploadPicture.vue'
+import Index from '@/views/Index.vue'
 
 Vue.use(VueRouter)
 
 const routes = [
   {
     path: '/',
-    name: 'Main',
-    component: Main
+    name: 'Index',
+    component: Index
   },
-  {
-    path : '/upload',
-    name : 'UploadPicture',
-    component : UploadPicture
-  }
 ]
 
 const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
-  routes
+  routes : [
+    ...ArticleRouter,
+    ...UserRouter,
+    ...routes,
+  ]
 })
 
 export default router

@@ -13,18 +13,13 @@
 
       </v-input>
       <v-spacer></v-spacer>
-      <div id="navbar">
-        <router-link class="nav-link" :to="{ name : 'Main' }" exact>
-          <v-btn class="nav-btn">
-            메인
-          </v-btn>
-        </router-link>
-        <router-link class="nav-link" :to="{ name : 'UploadPicture' }" exact>
-          <v-btn class="nav-btn">
-            업로드
-          </v-btn>
-        </router-link>
-      </div>
+        <div id="navbar">
+          <router-link class="nav-link" v-for="(link, index) in logoutLinkList" :key="index" :to="link.to" exact>
+            <v-btn class="nav-btn">
+              {{ link.btnContext }}
+            </v-btn>
+          </router-link>
+        </div>
     </v-app-bar>
 
     <v-main>
@@ -37,7 +32,26 @@
 export default {
 name : 'App',
 data: () => ({
-    //
+    loginLinkList : [
+      {
+        to : { name : 'Index'},
+        btnContext : '메인페이지'
+      },
+      {
+        to : { name : 'UploadPicture'},
+        btnContext : '사진업로드'
+      }
+    ],
+    logoutLinkList : [
+      {
+        to : { name : 'Index'},
+        btnContext : '메인페이지'
+      },
+      {
+        to : { name : 'UploadPicture'},
+        btnContext : '사진업로드'
+      }
+    ]
   }),
 };
 </script>

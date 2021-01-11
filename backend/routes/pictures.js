@@ -66,12 +66,12 @@ router.get('/option', function(req, res, next) {
   });
 
 // 모든 그림 가져오기
-// router.get('/', function(req, res, next) {
-//     Picture.find().then((characters) => {
-//         res.status(200).json(characters);
-//     }).catch((err) => {
-//         res.status(500).json({"error" : err});
-//       });
-//     });
+router.get('/', function(req, res, next) {
+    Picture.find().then((characters) => {
+        res.status(200).json(characters);
+    }).catch((err) => {
+        res.status(500).json({"error" : err});
+      });
+    });
 
 module.exports = router;

@@ -8,6 +8,8 @@ const mongoose = require('mongoose');
 var fs = require('fs');
 var multer = require('multer');
 
+const Picture = require('./models/picture');
+
 var usersRouter = require('./routes/users');
 var picturesRouter = require('./routes/pictures');
 
@@ -25,7 +27,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use('/uploaded', express.static(path.join(__dirname, 'pictures')));
+app.use('/storage', express.static(path.join(__dirname, 'pictures')));
 
 // CORS policy
 var corsOptions = {
@@ -42,7 +44,7 @@ let upload = multer({
       cb(null, path.join(picturePath, req.body['picArtist']));
     },
     filename: function (req, file, cb) {
-      cb(null, req.body['picTitle'] + new Date().valueOf() + path.extname(file.originalname));
+      cb(null, new Date().valueOf() + path.extname(file.originalname));
     }
   }),
 });
@@ -60,10 +62,16 @@ app.post('/api/pictures', upload.single('picImage'), function(req, res) {
   });
 
   fs.readdir(path.join(picturePath, data['picArtist']), (err, files) => {
-    res.status(200).json({...req.body, 
-      filePath : path.join('http://localhost:8000/uploaded/', req.body['picArtist'], files[files.length-1])
+    const pictureInfo = {...req.body, 
+      filePath : path.join(req.body['picArtist'], files[files.length-1])
+    };
+
+    Picture.create(pictureInfo).then((picture) => {
+      res.status(200).json(picture);
+    }).catch((err) => {
+      res.status(500).json({"error" : err});
     });
-  })
+  });
 })
 
 app.use('/api/users', usersRouter);

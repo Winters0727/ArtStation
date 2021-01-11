@@ -21,7 +21,7 @@ const userSchema = new Schema({
         type : String,
         default : '',
     },
-    userPictureSrc : {
+    userLikePic : {
         type : Array,
         default : [],
     },
