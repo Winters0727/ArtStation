@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container class="mt-5 mb-3">
     <v-row>
       <v-col :class="galleryClass" cols=3 v-for="(picture, index) in pictureList" :key="index">
         <img
@@ -36,7 +36,7 @@ export default {
 
     async created() {
         if (this.user === 'None') {
-            this.pictureList = await this.$store.dispatch('getPictures', 30);
+            this.pictureList = await this.$store.dispatch('getPictures', 28);
         }
 
         this.galleryClass = 'gallery-wrapper';
@@ -54,6 +54,7 @@ export default {
 }
 
 .gallery-wrapper {
+    position: relative;
     padding: 2px;
     margin: 0;
     animation: pictureOut 1s both ease-out;
@@ -66,9 +67,10 @@ export default {
 }
 
 .gallery-picture {
+    position: relative;
     width: 100%;
     height: 300px;
-    border: ridge 4mm gray
+    border: ridge 4mm #9696ff;
 }
 
 /* .gallery-picture:hover {

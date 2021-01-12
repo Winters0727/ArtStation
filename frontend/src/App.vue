@@ -2,33 +2,50 @@
   <v-app>
     <v-app-bar
       app
-      color="warning"
-      dark
+      color="#6464ff"
+      class="app-bar"
     >
-      <div id="logo">
-
+      <img
+      class="d-inline"
+      id="logo"
+      :src="require('@/assets/logo.png')" />
+      <div 
+      class="d-inline-block mx-2"
+      id="logo-text">
+        Purple Gallery
       </div>
       <v-spacer></v-spacer>
       <v-input type="text">
 
       </v-input>
       <v-spacer></v-spacer>
-        <div id="navbar">
+        <div v-if="false" id="navbar">
+          <router-link class="nav-link" v-for="(link, index) in loginLinkList" :key="index" :to="link.to" exact>
+            <v-btn class="nav-btn">
+              {{ link.btnContext }}
+            </v-btn>
+          </router-link>
+          <!-- 로그아웃 버튼 추가 -->
+        </div>
+        <div v-else id="navbar">
           <router-link class="nav-link" v-for="(link, index) in logoutLinkList" :key="index" :to="link.to" exact>
             <v-btn class="nav-btn">
               {{ link.btnContext }}
             </v-btn>
           </router-link>
+          <CreateAccount />
         </div>
     </v-app-bar>
 
-    <v-main>
+    <v-main class="main">
       <router-view></router-view>
     </v-main>
   </v-app>
 </template>
 
 <script>
+import CreateAccount from '@/components/users/CreateAccount';
+
 export default {
 name : 'App',
 data: () => ({
@@ -36,6 +53,10 @@ data: () => ({
       {
         to : { name : 'Index'},
         btnContext : '메인페이지'
+      },
+      {
+        to : { name : 'MyPage'},
+        btnContext : '마이페이지'
       },
       {
         to : { name : 'UploadPicture'},
@@ -46,17 +67,32 @@ data: () => ({
       {
         to : { name : 'Index'},
         btnContext : '메인페이지'
-      },
-      {
-        to : { name : 'UploadPicture'},
-        btnContext : '사진업로드'
       }
     ]
   }),
+  components : {
+    CreateAccount
+  }
 };
 </script>
 
 <style scoped>
+.main {
+  background-color:#c8c8ff;
+}
+
+#logo {
+  width: 3rem;
+  height: auto;
+}
+
+#logo-text {
+  vertical-align: middle;
+  font-family: fantasy;
+  font-size: 2em;
+  color: white;
+}
+
 /* a {
   text-decoration: none;
 }
