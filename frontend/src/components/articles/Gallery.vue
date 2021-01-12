@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-row>
-      <v-col class="gallery-wrapper" cols=3 v-for="(picture, index) in pictureList" :key="index">
+      <v-col :class="galleryClass" cols=3 v-for="(picture, index) in pictureList" :key="index">
         <img
         class="gallery-picture"
         :src="`${dbURL}/storage/${picture.filePath}`"
@@ -20,6 +20,7 @@ export default {
     name : 'Gallery',
     data() {
         return {
+            galleryClass : 'preload',
             dbURL : process.env.VUE_APP_BACKEND_URL,
             pictureList : null,
         }
@@ -34,23 +35,71 @@ export default {
     },
 
     async created() {
-        if (this.user === "None") {
-            this.pictureList = await this.$store.dispatch('getPictures');
+        if (this.user === 'None') {
+            this.pictureList = await this.$store.dispatch('getPictures', 30);
         }
 
-        console.log(this.pictureList)
-    }
+        this.galleryClass = 'gallery-wrapper';
+    },
 }
 </script>
 
-<style>
+<style scoped>
+.preload {
+  transition: none !important;
+  -webkit-transition: none !important;
+  -moz-transition: none !important;
+  -ms-transition: none !important;
+  -o-transition: none !important;
+}
+
 .gallery-wrapper {
-    padding: 0;
-    margin: 2px;
+    padding: 2px;
+    margin: 0;
+    animation: pictureOut 1s both ease-out;
+}
+
+.gallery-wrapper:hover {
+    padding: 2px;
+    margin: 0;
+    animation: pictureOn 1s both ease-out;
 }
 
 .gallery-picture {
     width: 100%;
-    height: 100%;
+    height: 300px;
+    border: ridge 4mm gray
+}
+
+/* .gallery-picture:hover {
+    animation: pictureOn 1s both;
+} */
+
+@keyframes pictureOn {
+    to {
+        transform: scale(1.1);
+        opacity: 0.7;
+        z-index: 1;
+    }
+
+    from {
+        transform: scale(1);
+        opacity: 1;
+        z-index: 0;
+    }
+}
+
+@keyframes pictureOut {
+    from {
+        transform: scale(1.1);
+        opacity: 0.7;
+        z-index: 1;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+        z-index: 0;
+    }
 }
 </style>

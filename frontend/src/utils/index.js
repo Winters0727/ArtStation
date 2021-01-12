@@ -16,7 +16,12 @@ const checkEmail = function(email) {
 
 const getInfoFromToken = function(token) {
     const result = jwt.verify(token, process.env.VUE_APP_JWT_SECRET);
-    return result
+    return result;
 }
 
-export { isEmpty, isLogin, checkEmail, getInfoFromToken }
+const modifyDate = function({ originDate=new Date(Date.now()), years=0, months=0, dates=0, hours=0, minutes=0, seconds=0 }) {
+    const modifiedDate = new Date(originDate.getFullYear() + years, originDate.getMonth() + months, originDate.getDate() + dates, originDate.getHours() + hours, originDate.getMinutes() + minutes, originDate.getSeconds() + seconds, originDate.getMilliseconds());
+    return modifiedDate;
+}
+
+export { isEmpty, isLogin, checkEmail, getInfoFromToken, modifyDate }

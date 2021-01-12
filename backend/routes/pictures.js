@@ -58,20 +58,31 @@ router.delete('/', function(req, res, next) {
 
 // 임의 옵션 기준 검색
 router.get('/option', function(req, res, next) {
+  if (Object.keys(req.query).includes('limit')) {
+    const options = req.query;
+    const limit = parseInt(req.query['limit']);
+    delete options.limit;
+    Picture.find(options).limit(limit).then((characters) => {
+      res.status(200).json(characters);
+  }).catch((err) => {
+      res.status(500).json({"error" : err});
+    });
+  } else {
     Picture.find(req.query).then((characters) => {
-        res.status(200).json(characters);
-      }).catch((err) => {
-        res.status(500).json({"error" : err});
-      }); 
-  });
+      res.status(200).json(characters);
+    }).catch((err) => {
+      res.status(500).json({"error" : err});
+    }); 
+  }
+}); 
 
 // 모든 그림 가져오기
 router.get('/', function(req, res, next) {
-    Picture.find().then((characters) => {
-        res.status(200).json(characters);
-    }).catch((err) => {
-        res.status(500).json({"error" : err});
-      });
-    });
+  Picture.find().then((characters) => {
+    res.status(200).json(characters);
+  }).catch((err) => {
+    res.status(500).json({"error" : err});
+  });  
+});
 
 module.exports = router;
