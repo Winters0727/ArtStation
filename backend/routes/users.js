@@ -4,13 +4,12 @@ const User = require('../models/user');
 const { hashPassword } = require('../utils/index');
 
 // 유저 회원가입
-// 유저 등록시에 pictures 하위에 폴더를 생성해야함.
 router.post('/', async function(req, res, next) {
-  let userInfo = req.body;
-  const hash = await hashPassword(userInfo.userPassword);
-  userInfo.userPassword = hash;
-  User.create(userInfo).then((user) => {
-    res.status(200).json(user);
+  const userInfo = req.body;
+  userInfo['userPassword'] = await hashPassword(req.body['userPassword']);
+  await User.register(userInfo, req.body['userPassword'])
+  .then(() => {
+    res.status(200).json({"result" : "success"});
   }).catch((err) => {
     res.status(500).json({"error" : err});
   });
@@ -19,8 +18,8 @@ router.post('/', async function(req, res, next) {
 // 유저 정보 아이디 기준 업데이트
 router.put('/', function(req, res, next) {
   const userId = checkToken(req, res)["result"]["_id"]
-  User.findByIdAndUpdate(userId, req.body).then((result) => {
-    res.status(200).json(result);
+  User.findByIdAndUpdate(userId, req.body).then(() => {
+    res.status(200).json({"result" : "success"});
   }).catch((err) => {
     res.status(500).json({"error" : err});
   });
@@ -29,8 +28,8 @@ router.put('/', function(req, res, next) {
 // 유저 아이디 기준 삭제
 router.delete('/', function(req, res, next) {
   const userId = checkToken(req, res)["result"]["_id"]
-  User.findByIdAndDelete(userId).then((result) => {
-    res.status(200).json(result);
+  User.findByIdAndDelete(userId).then(() => {
+    res.status(200).json({"result" : "success"});
   }).catch((err) => {
     res.status(500).json({"error" : err});
   }); 

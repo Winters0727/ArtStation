@@ -1,7 +1,7 @@
 <template>
   <v-container class="mt-5 mb-3">
     <v-row>
-      <v-col :class="galleryClass" cols=3 v-for="(picture, index) in pictureList" :key="index">
+      <v-col class="gallery-wrapper" cols=3 v-for="(picture, index) in pictureList" :key="index">
         <img
         class="gallery-picture"
         :src="`${dbURL}/storage/${picture.filePath}`"
@@ -20,7 +20,6 @@ export default {
     name : 'Gallery',
     data() {
         return {
-            galleryClass : 'preload',
             dbURL : process.env.VUE_APP_BACKEND_URL,
             pictureList : null,
         }
@@ -38,8 +37,6 @@ export default {
         if (this.user === 'None') {
             this.pictureList = await this.$store.dispatch('getPictures', 28);
         }
-
-        this.galleryClass = 'gallery-wrapper';
     },
 }
 </script>

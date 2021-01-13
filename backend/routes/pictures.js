@@ -62,7 +62,7 @@ router.get('/option', function(req, res, next) {
     const options = req.query;
     const limit = parseInt(req.query['limit']);
     delete options.limit;
-    Picture.find(options).limit(limit).then((characters) => {
+    Picture.find(options).limit(limit).sort('-createAt').then((characters) => {
       res.status(200).json(characters);
   }).catch((err) => {
       res.status(500).json({"error" : err});

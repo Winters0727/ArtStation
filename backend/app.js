@@ -3,20 +3,29 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-var cors = require('cors');
+
+const cors = require('cors');
 const mongoose = require('mongoose');
-var fs = require('fs');
-var multer = require('multer');
+const fs = require('fs');
+const multer = require('multer');
+const passport = require('passport');
+const session = require('express-session');
+const bodyParser = require('body-parser');
+const flash = require('connect-flash');
+
+require('./passport');
 
 const Picture = require('./models/picture');
 
-var usersRouter = require('./routes/users');
-var picturesRouter = require('./routes/pictures');
+const usersRouter = require('./routes/users');
+const picturesRouter = require('./routes/pictures');
 
-var app = express();
+const app = express();
 
 mongoose.connect(process.env.DB_URL);
 mongoose.Promise = global.Promise;
+
+const MongoStore = require('connect-mongo')(session);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -36,6 +45,32 @@ var corsOptions = {
 }
 app.use(cors(corsOptions));
 
+// 인증관련
+app.use(session({
+  secret : process.env.SECRET,
+  resave : true,
+  saveUninitialized : false,
+  store : new MongoStore({ mongooseConnection : mongoose.connection }),
+}));
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(flash());
+
+// 로그인
+app.post('/login',
+  passport.authenticate('local', {
+    successRedirect : '/',
+    failureRedirect : '/login',
+    failureFlash : true
+  }));
+
+// 로그아웃
+app.get('/logout', function(req, res) {
+  req.logout();
+  res.status(200).json({ result : 'success' });
+})
+
 const picturePath = path.join(__dirname, 'pictures');
 
 let upload = multer({
@@ -49,6 +84,8 @@ let upload = multer({
   }),
 });
 
+
+// 업로드 관련 코드
 app.post('/api/pictures', upload.single('picImage'), function(req, res) {
   const data = req.body;
   fs.readdir(picturePath, (err, files) => {
@@ -72,7 +109,15 @@ app.post('/api/pictures', upload.single('picImage'), function(req, res) {
       res.status(500).json({"error" : err});
     });
   });
-})
+});
+
+// 로그인
+app.post('/login',
+  passport.authenticate('local', { failureRedirect : '/login' }),
+  function(req, res) {
+    res.redirect('/');
+  }
+)
 
 app.use('/api/users', usersRouter);
 app.use('/api/pictures', picturesRouter);

@@ -1,8 +1,8 @@
 const routes = [
     {
         path : '/user/:userNickname',
-        name : 'UserGallery',
-        component : () => import('@/views/users/UserGallery')
+        name : 'MyPage',
+        component : () => import('@/views/users/MyPage')
     },
   ]
   

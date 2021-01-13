@@ -1,6 +1,6 @@
 <template>
   <v-dialog
-        v-model="registerDialog"
+        v-model="loginDialog"
         max-width="500px"
         max-height="auto"
       >
@@ -12,13 +12,13 @@
         v-bind="attrs"
         v-on="on"
         >
-        회원가입
+        로그인
         </v-btn>
     </template>
 
     <v-card>
         <v-card-title class="white--text" id="headline">
-          회원가입
+          로그인
         </v-card-title>
 
         <v-card-text class="mt-10">
@@ -40,16 +40,6 @@
             ></v-text-field>
             </v-col>
           </v-row>
-          <v-row>
-            <v-col cols=6>
-              <v-text-field
-              label="Nickname"
-              type="text"
-              v-model="userNickname"
-              solo
-            ></v-text-field>
-            </v-col>
-          </v-row>
         </v-card-text>
 
         <v-divider></v-divider>
@@ -60,15 +50,15 @@
                 class="btn white--text mx-3"
                 :color="btnColor"
                 dark
-                @click="register"
+                @click="login"
                 >
-                회원가입
+                로그인
               </v-btn>
               <v-btn
                 class="btn white--text mx-3"
                 :color="btnColor"
                 dark
-                @click="registerDialog = false"
+                @click="loginDialog = false"
                 >
                 닫기
               </v-btn>
@@ -79,19 +69,18 @@
 
 <script>
 export default {
-    name : 'CreateAccount',
+    name : 'Login',
     data() {
         return {
             themeColor : '#6464ff',
             btnColor : '#9696ff',
-            registerDialog: false,
+            loginDialog: false,
             userEmail : new String(),
             userPassword : new String(),
-            userNickname : new String(),
         }
     },
     methods : {
-      register : function() {
+      login : function() {
         console.log('test');
       }
     }

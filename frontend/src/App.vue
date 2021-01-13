@@ -33,6 +33,7 @@
               {{ link.btnContext }}
             </v-btn>
           </router-link>
+          <Login />
           <CreateAccount />
         </div>
     </v-app-bar>
@@ -44,6 +45,7 @@
 </template>
 
 <script>
+import Login from '@/components/users/Login';
 import CreateAccount from '@/components/users/CreateAccount';
 
 export default {
@@ -71,12 +73,15 @@ data: () => ({
     ]
   }),
   components : {
+    Login,
     CreateAccount
   }
 };
 </script>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Do+Hyeon&display=swap');
+
 .main {
   background-color:#c8c8ff;
 }
@@ -93,11 +98,20 @@ data: () => ({
   color: white;
 }
 
-/* a {
+.nav-link .nav-btn {
+  font-family: 'Do Hyeon', sans-serif;
+  font-size: 1rem;
+  color: white;
+  border: solid 0.1rem white;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+a {
   text-decoration: none;
 }
 
-.nav-link .nav-btn {
+/* .nav-link .nav-btn {
   font-size: 1rem;
   margin-left: 5px;
   margin-right: 5px;
