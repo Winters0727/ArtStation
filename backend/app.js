@@ -52,23 +52,47 @@ app.use(session({
   saveUninitialized : false,
   store : new MongoStore({ mongooseConnection : mongoose.connection }),
 }));
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
 
 // 로그인
-app.post('/login',
-  passport.authenticate('local', {
-    successRedirect : '/',
-    failureRedirect : '/login',
-    failureFlash : true
-  }));
+const createToken = require('./utils/jwt').createToken;
+const User = require('./models/user');
+
+app.post('/login', function(req, res, next) {
+  passport.authenticate('local', function(err, user, info) {
+    if (err) res.status(500).json({'error' : err});
+    if (user) {
+      const payload = {
+        _id : user._id,
+        userEmail : user.userEmail,
+        userNickname : user.userNickname,
+        userProfilePic : user.userProfilePic,
+        userLikePic : user.userLikePic
+      };
+      const { token, refreshToken } = createToken(payload);
+      res.status(200).json({ result : 'success', token : token, refreshToken : refreshToken });
+    } else {
+      User.findOne({userEmail : req.body['userEmail']})
+      .then((user) => {
+        if (user === null) {
+          res.status(400).json({ 'error' : 4001 });
+        } else {
+          if (user['userPassword'] !== req.body['userPassword']) res.status(400).json({ 'error' : 4002 });
+        }
+      })
+      .catch((err) => res.status(500).json({'error' : err}));
+    };
+  })(req, res);
+});
 
 // 로그아웃
 app.get('/logout', function(req, res) {
   req.logout();
-  res.status(200).json({ result : 'success' });
+  res.status(200).json({ 'result' : 'success' });
 })
 
 const picturePath = path.join(__dirname, 'pictures');
@@ -110,14 +134,6 @@ app.post('/api/pictures', upload.single('picImage'), function(req, res) {
     });
   });
 });
-
-// 로그인
-app.post('/login',
-  passport.authenticate('local', { failureRedirect : '/login' }),
-  function(req, res) {
-    res.redirect('/');
-  }
-)
 
 app.use('/api/users', usersRouter);
 app.use('/api/pictures', picturesRouter);

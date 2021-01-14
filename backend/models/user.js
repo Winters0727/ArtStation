@@ -33,7 +33,8 @@ const userSchema = new Schema({
 });
 
 userSchema.plugin(passportLocalMongoose,
-    { usernameField : 'userEmail' }
+    { usernameField : 'userEmail',
+      passwordField : 'userPassword' }
 );
 
 const User = mongoose.model('user', userSchema);

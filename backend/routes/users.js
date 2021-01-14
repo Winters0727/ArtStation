@@ -7,7 +7,7 @@ const { hashPassword } = require('../utils/index');
 router.post('/', async function(req, res, next) {
   const userInfo = req.body;
   userInfo['userPassword'] = await hashPassword(req.body['userPassword']);
-  await User.register(userInfo, req.body['userPassword'])
+  await User.register(userInfo, userInfo['userPassword'])
   .then(() => {
     res.status(200).json({"result" : "success"});
   }).catch((err) => {
