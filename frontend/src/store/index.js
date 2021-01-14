@@ -1,7 +1,8 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 
-import { createRequest, getRequest } from '@/api/api'
+import { loginRequest, logoutRequest, createRequest, getRequest } from '@/api/api'
+import { hashPassword } from '@/utils/index'
 
 Vue.use(Vuex)
 
@@ -11,6 +12,20 @@ export default new Vuex.Store({
   mutations: {
   },
   actions: {
+    // 로그인
+    async login(context, payload) {
+      const hashedPayload = payload;
+      hashedPayload['userPassword'] = await hashPassword(payload['userPassword']);
+      const response = await loginRequest(payload);
+      return response.data
+    },
+
+    // 로그아웃
+    async logout() {
+      const response = await logoutRequest();
+      return response.data
+    },
+
     // 이미지 업로드 (한 개만 가능)
     async uploadPicture(context, payload) {
       const response = await createRequest('pictures', payload);

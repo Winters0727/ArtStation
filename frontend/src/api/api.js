@@ -2,9 +2,18 @@ import axios from 'axios'
 
 const baseAPI = axios.create(
     {
-        baseURL : process.env.VUE_APP_BACKEND_URL
+        baseURL : process.env.VUE_APP_BACKEND_URL,
+        withCredentials : true,
     }
 )
+
+const loginRequest = function(data) {
+  return baseAPI.post('/login', data);
+}
+
+const logoutRequest = function() {
+  return baseAPI.get('/logout');
+}
 
 const createRequest = function(resource, data) {
     return baseAPI.post(`/api/${resource}`, data)
@@ -28,4 +37,4 @@ const getAllRequest = function(resource) {
     return baseAPI.get(`/api/${resource}`)
   }
 
-export { createRequest, updateRequest, deleteRequest, getRequest, getAllRequest }
+export { loginRequest, logoutRequest, createRequest, updateRequest, deleteRequest, getRequest, getAllRequest }

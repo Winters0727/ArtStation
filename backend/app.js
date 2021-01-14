@@ -40,7 +40,8 @@ app.use('/storage', express.static(path.join(__dirname, 'pictures')));
 
 // CORS policy
 var corsOptions = {
-  origin: '*',
+  origin: true,
+  credentials : true,
   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }
 app.use(cors(corsOptions));
@@ -49,7 +50,8 @@ app.use(cors(corsOptions));
 app.use(session({
   secret : process.env.SECRET,
   resave : true,
-  saveUninitialized : false,
+  saveUninitialized : true,
+  cookie: { maxAge: 24*60*60*1000 },
   store : new MongoStore({ mongooseConnection : mongoose.connection }),
 }));
 app.use(bodyParser.json());
@@ -73,15 +75,18 @@ app.post('/login', function(req, res, next) {
         userProfilePic : user.userProfilePic,
         userLikePic : user.userLikePic
       };
+      req.session._id = user._id;
+      req.session.userEmail = user.userEmail;
+      req.session.userNickname = user.userNickname;
       const { token, refreshToken } = createToken(payload);
       res.status(200).json({ result : 'success', token : token, refreshToken : refreshToken });
     } else {
       User.findOne({userEmail : req.body['userEmail']})
       .then((user) => {
         if (user === null) {
-          res.status(400).json({ 'error' : 4001 });
+          res.json({ 'error' : 4001 });
         } else {
-          if (user['userPassword'] !== req.body['userPassword']) res.status(400).json({ 'error' : 4002 });
+          if (user['userPassword'] !== req.body['userPassword']) res.json({ 'error' : 4002 });
         }
       })
       .catch((err) => res.status(500).json({'error' : err}));
@@ -90,7 +95,7 @@ app.post('/login', function(req, res, next) {
 });
 
 // 로그아웃
-app.get('/logout', function(req, res) {
+app.get('/logout', function(req, res, err) {
   req.logout();
   res.status(200).json({ 'result' : 'success' });
 })

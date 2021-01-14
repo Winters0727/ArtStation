@@ -68,6 +68,8 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex';
+
 export default {
     name : 'Login',
     data() {
@@ -77,11 +79,29 @@ export default {
             loginDialog: false,
             userEmail : new String(),
             userPassword : new String(),
+            errorMessage : new String(),
         }
     },
     methods : {
-      login : function() {
-        console.log('test');
+      ...mapActions(['login']),
+      login : async function() {
+        const payload = {
+          userEmail : this.userEmail,
+          userPassword : this.userPassword
+        };
+        const result = await this.$store.dispatch('login', payload);
+        if (Object.keys(result).includes('error')) {
+          const errorCode = result['error'];
+          if (errorCode === 4001) {
+            this.errorMessage = '존재하지 않는 이메일입니다.';
+            console.log(this.errorMessage);
+          } else if (errorCode === 4002) {
+            this.errorMessage = '비밀번호가 올바르지 않습니다.';
+            console.log(this.errorMessage);
+          }
+        } else {
+          console.log(result);
+        }
       }
     }
 }
