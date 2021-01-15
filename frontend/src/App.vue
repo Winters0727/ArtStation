@@ -19,12 +19,15 @@
 
       </v-input>
       <v-spacer></v-spacer>
-        <div v-if="false" id="navbar">
+        <div v-if="isLogin" id="navbar">
           <router-link class="nav-link" v-for="(link, index) in loginLinkList" :key="index" :to="link.to" exact>
             <v-btn class="nav-btn">
               {{ link.btnContext }}
             </v-btn>
           </router-link>
+          <v-btn class="nav-btn" @click="logout">
+              로그아웃
+            </v-btn>
           <!-- 로그아웃 버튼 추가 -->
         </div>
         <div v-else id="navbar">
@@ -47,6 +50,10 @@
 <script>
 import Login from '@/components/users/Login';
 import CreateAccount from '@/components/users/CreateAccount';
+
+import { mapActions } from 'vuex';
+import { isLogin } from '@/utils/index';
+import { verifyToken } from '@/utils/jwt';
 
 export default {
 name : 'App',
@@ -75,6 +82,25 @@ data: () => ({
   components : {
     Login,
     CreateAccount
+  },
+  methods : {
+    ...mapActions(['logout']),
+    logout : async function() {
+      await this.$store.dispatch('logout');
+      this.$session.destroy();
+      this.$cookies.remove('token');
+      this.$router.go({ name : 'Index' });
+    }
+  },
+  computed : {
+    isLogin : isLogin,
+  },
+  async created() {
+    if (this.isLogin && this.$store.state.user === null) {
+      const token = this.$cookies.get('token'), refreshToken = this.$session.get('refreshToken');
+      const { result } = verifyToken(token, refreshToken);
+      await this.$store.commit('changeUser', result);
+    }
   }
 };
 </script>
@@ -92,15 +118,16 @@ data: () => ({
 }
 
 #logo-text {
+  cursor: default;
   vertical-align: middle;
   font-family: fantasy;
   font-size: 2em;
   color: white;
 }
 
-.nav-link .nav-btn {
+.nav-btn {
   font-family: 'Do Hyeon', sans-serif;
-  font-size: 1rem;
+  font-size: 0.8rem;
   color: white;
   border: solid 0.1rem white;
   margin-left: 5px;

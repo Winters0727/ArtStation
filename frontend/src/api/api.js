@@ -15,26 +15,64 @@ const logoutRequest = function() {
   return baseAPI.get('/logout');
 }
 
+const registerRequest = function(data) {
+  return baseAPI.post('/api/users', data);
+}
+
 const createRequest = function(resource, data) {
-    return baseAPI.post(`/api/${resource}`, data)
+  const refreshToken = this.$session.get('refreshToken');
+    return baseAPI.post(`/api/${resource}`, data, {
+      headers : {
+        'authorization' : refreshToken
+      },
+    });
   }
 
 const updateRequest = function(resource, data) {
-    return baseAPI.put(`/api/${resource}`, data)
+  const refreshToken = this.$session.get('refreshToken');
+    return baseAPI.put(`/api/${resource}`, data, {
+      headers : {
+        'authorization' : refreshToken
+      },
+    });
   }
 
 const deleteRequest = function(resource, data) {
-    return baseAPI.delete(`/api/${resource}`, data)
+  const refreshToken = this.$session.get('refreshToken');
+    return baseAPI.delete(`/api/${resource}`, data, {
+      headers : {
+        'authorization' : refreshToken
+      },
+    });
   }
 
 const getRequest = function(resource, options) {
+  const refreshToken = this.$session.get('refreshToken');
     return baseAPI.get(`/api/${resource}/option`, {
         params : options,
-    })
+        headers : {
+          'authorization' : refreshToken
+        },
+    });
   }
 
-const getAllRequest = function(resource) {
-    return baseAPI.get(`/api/${resource}`)
+  const getAllRequest = function(resource) {
+    const refreshToken = this.$session.get('refreshToken');
+    return baseAPI.get(`/api/${resource}`, {
+      headers : {
+        'authorization' : refreshToken
+      },
+    });
   }
 
-export { loginRequest, logoutRequest, createRequest, updateRequest, deleteRequest, getRequest, getAllRequest }
+  const getRequestWithoutToken = function(resource, options) {
+    return baseAPI.get(`/api/${resource}/option`, {
+        params : options,
+    });
+  }
+
+const getAllRequestWithoutToken = function(resource) {
+    return baseAPI.get(`/api/${resource}`);
+  }
+
+export { registerRequest, loginRequest, logoutRequest, createRequest, updateRequest, deleteRequest, getRequest, getAllRequest, getRequestWithoutToken, getAllRequestWithoutToken }

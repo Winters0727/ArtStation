@@ -72,8 +72,7 @@ app.post('/login', function(req, res, next) {
         _id : user._id,
         userEmail : user.userEmail,
         userNickname : user.userNickname,
-        userProfilePic : user.userProfilePic,
-        userLikePic : user.userLikePic
+        userProfilePic : user.userProfilePic
       };
       req.session._id = user._id;
       req.session.userEmail = user.userEmail;

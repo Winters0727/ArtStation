@@ -1,18 +1,16 @@
-import VueCookies from 'vue-cookies'
 import jwt from 'jsonwebtoken'
-
-const bcrypt = require('bcrypt');
+import bcrypt from 'bcryptjs'
 
 const isEmpty = function(target) {
     return target.length > 0 ? false : true;
 }
 
 const isLogin = function() {
-    return !!(VueCookies.get('token') && localStorage.getItem('vue-session-key'));
+    return !!(this.$cookies.get('token') && this.$session.get('refreshToken'));
 }  
 
 const hashPassword = function(password) {
-    return bcrypt.hash(password, 10)
+    return bcrypt.hashSync(password, 10)
 }
 
 const checkEmail = function(email) {

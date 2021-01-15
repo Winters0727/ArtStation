@@ -1,12 +1,12 @@
 var express = require('express');
 var router = express.Router();
 const User = require('../models/user');
-const { hashPassword } = require('../utils/index');
+// const { hashPassword } = require('../utils/index');
 
 // 유저 회원가입
 router.post('/', async function(req, res, next) {
   const userInfo = req.body;
-  userInfo['userPassword'] = await hashPassword(req.body['userPassword']);
+  // userInfo['userPassword'] = await hashPassword(req.body['userPassword']);
   await User.register(userInfo, userInfo['userPassword'])
   .then(() => {
     res.status(200).json({"result" : "success"});

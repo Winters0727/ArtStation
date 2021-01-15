@@ -1,21 +1,29 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 
-import { loginRequest, logoutRequest, createRequest, getRequest } from '@/api/api'
-import { hashPassword } from '@/utils/index'
+import { registerRequest, loginRequest, logoutRequest, createRequest, getRequestWithoutToken } from '@/api/api'
+// import { hashPassword } from '@/utils/index'
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+    user : null,
   },
   mutations: {
+    changeUser : function(state, payload) {
+      state.user = payload
+    }
   },
   actions: {
+    // 회원가입
+    async register(context, payload) {
+      const response = await registerRequest(payload);
+      return response.data
+    },
+
     // 로그인
     async login(context, payload) {
-      const hashedPayload = payload;
-      hashedPayload['userPassword'] = await hashPassword(payload['userPassword']);
       const response = await loginRequest(payload);
       return response.data
     },
@@ -36,9 +44,9 @@ export default new Vuex.Store({
     async getPictures(context, limit=null) {
       let response = null;
       if (limit !== null) {
-        response = await getRequest('pictures', { limit : limit });
+        response = await getRequestWithoutToken('pictures', { limit : limit });
       } else {
-        response = await getRequest('pictures');
+        response = await getRequestWithoutToken('pictures');
       }
       return response.data
     }

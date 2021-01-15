@@ -6,7 +6,7 @@
       >
     <template v-slot:activator="{ on, attrs }">
         <v-btn
-        class="btn white--text mx-3"
+        class="nav-btn white--text"
         :color="btnColor"
         dark
         v-bind="attrs"
@@ -57,7 +57,7 @@
         <v-card-actions id="card-footer">
         <v-spacer></v-spacer>
           <v-btn
-                class="btn white--text mx-3"
+                class="nav-btn white--text"
                 :color="btnColor"
                 dark
                 @click="register"
@@ -65,7 +65,7 @@
                 회원가입
               </v-btn>
               <v-btn
-                class="btn white--text mx-3"
+                class="nav-btn white--text"
                 :color="btnColor"
                 dark
                 @click="registerDialog = false"
@@ -78,6 +78,8 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex';
+
 export default {
     name : 'CreateAccount',
     data() {
@@ -88,11 +90,32 @@ export default {
             userEmail : new String(),
             userPassword : new String(),
             userNickname : new String(),
+            errorMessage : new String(),
         }
     },
     methods : {
-      register : function() {
-        console.log('test');
+      ...mapActions(['register', 'login']),
+      register : async function() {
+        let payload = {
+          userEmail : this.userEmail,
+          userPassword : this.userPassword,
+          userNickname : this.userNickname
+        }
+        let result = await this.$store.dispatch('register', payload);
+        if (Object.keys(result).includes('error')) {
+          const errorCode = result['error'];
+          if (errorCode === 4003) {
+            this.errorMessage = '회원가입에 실패했습니다.';
+            console.log(this.errorMessage);
+          } 
+        } else {
+          delete payload['userNickname'];
+          result = await this.$store.dispatch('login', payload);
+          this.$session.start();
+          this.$cookies.set('token', result['token']);
+          this.$session.set('refreshToken', result['refreshToken']);
+          this.$router.go(0);
+        }
       }
     }
 }
@@ -112,10 +135,13 @@ export default {
   background-color: #6464ff;
 }
 
-.btn {
+.nav-btn {
   font-family: 'Do Hyeon', sans-serif;
-  font-weight: bold;
+  font-size: 0.8rem;
+  color: white;
   border: solid 0.1rem white;
+  margin-left: 5px;
+  margin-right: 5px;
 }
 
 </style>

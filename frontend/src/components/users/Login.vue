@@ -6,7 +6,7 @@
       >
     <template v-slot:activator="{ on, attrs }">
         <v-btn
-        class="btn white--text mx-3"
+        class="nav-btn white--text"
         :color="btnColor"
         dark
         v-bind="attrs"
@@ -47,7 +47,7 @@
         <v-card-actions id="card-footer">
         <v-spacer></v-spacer>
           <v-btn
-                class="btn white--text mx-3"
+                class="nav-btn white--text"
                 :color="btnColor"
                 dark
                 @click="login"
@@ -55,7 +55,7 @@
                 로그인
               </v-btn>
               <v-btn
-                class="btn white--text mx-3"
+                class="nav-btn white--text"
                 :color="btnColor"
                 dark
                 @click="loginDialog = false"
@@ -100,7 +100,10 @@ export default {
             console.log(this.errorMessage);
           }
         } else {
-          console.log(result);
+          this.$session.start();
+          this.$cookies.set('token', result['token']);
+          this.$session.set('refreshToken', result['refreshToken']);
+          this.$router.go(0);
         }
       }
     }
@@ -121,10 +124,12 @@ export default {
   background-color: #6464ff;
 }
 
-.btn {
+.nav-btn {
   font-family: 'Do Hyeon', sans-serif;
-  font-weight: bold;
+  font-size: 0.8rem;
+  color: white;
   border: solid 0.1rem white;
+  margin-left: 5px;
+  margin-right: 5px;
 }
-
 </style>
