@@ -8,7 +8,7 @@
       <img
       class="d-inline"
       id="logo"
-      :src="require('@/assets/logo.png')" />
+      :src="require('@/assets/images/logo.png')" />
       <div 
       class="d-inline-block mx-2"
       id="logo-text">
