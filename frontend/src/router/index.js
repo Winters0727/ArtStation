@@ -10,14 +10,18 @@ Vue.use(VueRouter)
 
 const routes = [
   {
+    path: '/notfound',
+    name: 'NotFound',
+    component: NotFound
+  },
+  {
     path: '/',
     name: 'Index',
     component: Index
   },
   {
     path: '/*',
-    name: 'NotFound',
-    component: NotFound
+    redirect : { 'name' : 'NotFound' }
   },
 ]
 
@@ -31,11 +35,21 @@ const router = new VueRouter({
   ]
 })
 
+const routerRoutes = router.options.routes;
+const routesArray = routerRoutes.map(route => route.name).filter(name => name !== 'NotFound');
+
 router.beforeEach((to, from, next) => {
-  if (to.name !== 'Index' && !window.$cookies.get('token')) {
-    next({ 'name' : 'Index' });
+  if (to.name === 'NotFound') next();
+
+  if (routesArray.includes(to.name)) {
+    if (to.name !== 'Index' && !window.$cookies.get('token')) {
+      alert('접근 권한이 없습니다.');
+      next({ 'name' : 'Index' });
+    } else {
+      next();
+    }
   } else {
-    next();
+    next({ 'name' : 'NotFound' });
   }
 })
 

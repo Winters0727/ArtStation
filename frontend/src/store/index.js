@@ -9,10 +9,14 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     user : null,
+    token : null,
   },
   mutations: {
     changeUser : function(state, payload) {
       state.user = payload
+    },
+    registerToken : function(state, payload) {
+      state.token = payload
     }
   },
   actions: {
@@ -41,14 +45,20 @@ export default new Vuex.Store({
     },
 
     // 이미지 가져오기 (개수 기능 추가)
-    async getPictures(context, limit=null) {
-      let response = null;
-      if (limit !== null) {
-        response = await getRequestWithoutToken('pictures', { limit : limit });
+    async getPictures(context, payload) {
+      if (payload.userNickname === null) {
+        let response = null;
+        if (payload.limit !== null) {
+          response = await getRequestWithoutToken('pictures', { limit : payload.limit });
+        } else {
+          response = await getRequestWithoutToken('pictures');
+        }
+        return response.data;
       } else {
-        response = await getRequestWithoutToken('pictures');
+        const userResponse = await getRequestWithoutToken('users', { userNickname : payload.userNickname});
+        const userLikePic = userResponse.data[0].userLikePic;
+        return userLikePic;
       }
-      return response.data
     }
   },
   modules: {

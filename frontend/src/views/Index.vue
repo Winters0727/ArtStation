@@ -24,7 +24,7 @@ export default {
     },
     created() {
       if (this.isLogin) {
-        this.galleryUser = 'winters';
+        this.galleryUser = this.$store.state.user;
       } else {
         this.galleryUser = 'None';
       }

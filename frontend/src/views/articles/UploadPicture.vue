@@ -67,7 +67,6 @@ export default {
             picTitle : null,
             picContext : null,
             picGenere : null,
-            picBlob : null,
             picSrc : null,
             picFile : null,
             picWidth : null,
@@ -82,14 +81,18 @@ export default {
         submitPic : async function(e) {
             e.preventDefault();
             e.stopPropagation();
+            
+            const { userNickname } = this.$store.state.user;
+
+
             let payload = new FormData();
-            payload.append('picTitle', '테스트');
-            payload.append('picContext', '테스트입니다.');
-            payload.append('picArtist', 'winters');
+            payload.append('picTitle', this.picTitle);
+            payload.append('picContext', this.picContext);
+            payload.append('picArtist', userNickname);
             payload.append('picImage', this.picFile);
 
             const data = await this.$store.dispatch('uploadPicture', payload);
-            console.log(data);
+            
             this.picRes = data['filePath'];
             const resResult = document.getElementById('resResult');
             const resImage = document.createElement('img');
@@ -99,7 +102,6 @@ export default {
         changeFile : function(e) {
           this.picFile = e;
           const blobData = this.picSrc.slice();
-          this.picBlob = blobData;
           const data = URL.createObjectURL(blobData)
           this.picUploaded = data;
           URL.revokeObjectURL(blobData);

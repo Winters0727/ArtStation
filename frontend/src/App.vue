@@ -51,7 +51,7 @@
 import Login from '@/components/users/Login';
 import CreateAccount from '@/components/users/CreateAccount';
 
-import { mapActions } from 'vuex';
+import { mapActions, mapMutations } from 'vuex';
 import { isLogin } from '@/utils/index';
 import { verifyToken } from '@/utils/jwt';
 
@@ -64,7 +64,7 @@ data: () => ({
         btnContext : '메인페이지'
       },
       {
-        to : { name : 'MyPage'},
+        to : { name : 'MyPage', params : { userNickname : 'None' }},
         btnContext : '마이페이지'
       },
       {
@@ -77,13 +77,15 @@ data: () => ({
         to : { name : 'Index'},
         btnContext : '메인페이지'
       }
-    ]
+    ],
+    user : null,
   }),
   components : {
     Login,
     CreateAccount
   },
   methods : {
+    ...mapMutations(['changeUser', 'registerToken']),
     ...mapActions(['logout']),
     logout : async function() {
       await this.$store.dispatch('logout');
@@ -100,6 +102,9 @@ data: () => ({
       const token = this.$cookies.get('token'), refreshToken = this.$session.get('refreshToken');
       const { result } = verifyToken(token, refreshToken);
       await this.$store.commit('changeUser', result);
+      this.user = this.$store.state.user;
+      this.loginLinkList[1].to.params.userNickname = this.user.userNickname;
+      await this.$store.commit('registerToken', token);
     }
   }
 };

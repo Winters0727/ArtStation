@@ -35,7 +35,9 @@ export default {
 
     async created() {
         if (this.user === 'None') {
-            this.pictureList = await this.$store.dispatch('getPictures', 28);
+            this.pictureList = await this.$store.dispatch('getPictures', { userNickname : null, limit : 28 });
+        } else {
+            this.pictureList = await this.$store.dispatch('getPictures', { userNickname : this.user.userNickname, limit : 28 });
         }
     },
 }
