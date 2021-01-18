@@ -1,11 +1,17 @@
 <template>
-  <v-container v-if="isLogin">
+  <v-container>
     <v-row>
         <v-spacer></v-spacer>
-        <div class="gallery-radiobox">
+        <div class="gallery-radiobox" v-if="isLogin">
             <v-radio-group v-model="checkValue">
-                <v-radio class="d-inline-block mx-3 gallery-checkbox" v-for="(box, index) in loginRadioboxList" :key="index" color="indigo"
-                :label="box.label" :value="box.value" @click="pictureListSort" />
+              <v-radio class="d-inline-block mx-3 gallery-checkbox" v-for="(box, index) in loginRadioboxList" :key="index" color="indigo"
+              :label="box.label" :value="box.value" @click="pictureListSort" />
+            </v-radio-group>
+        </div>
+        <div class="gallery-radiobox" v-else>
+            <v-radio-group v-model="checkValue">
+              <v-radio class="d-inline-block mx-3 gallery-checkbox" v-for="(box, index) in logoutRadioboxList" :key="index" color="indigo"
+              :label="box.label" :value="box.value" @click="pictureListSort" />
             </v-radio-group>
         </div>
     </v-row>
@@ -16,29 +22,7 @@
         :src="`${dbURL}/storage/${picture.filePath}`"
         :alt="picture.picTitle"
         :title="picture.picTitle"
-        @click="pictureCountUp(picture._id)"
-        />
-      </v-col>
-    </v-row>
-  </v-container>
-  <v-container v-else>
-    <v-row>
-    <v-spacer></v-spacer>
-    <div class="gallery-radiobox">
-        <v-radio-group v-model="checkValue">
-            <v-radio class="d-inline-block mx-3 gallery-checkbox" v-for="(box, index) in logoutRadioboxList" :key="index" color="indigo"
-            :label="box.label" :value="box.value" @click="pictureListSort" />
-        </v-radio-group>
-    </div>
-    </v-row>
-    <v-row>
-      <v-col class="gallery-wrapper" cols=3 v-for="(picture, index) in pictureList" :key="index">
-        <img
-        class="gallery-picture"
-        :src="`${dbURL}/storage/${picture.filePath}`"
-        :alt="picture.picTitle"
-        :title="picture.picTitle"
-        @click="pictureCountUp(picture._id)"
+        @click="pictureCountUp(picture)"
         />
       </v-col>
     </v-row>
@@ -92,8 +76,9 @@ export default {
 
     methods : {
         ...mapActions['getPictures', 'updateClickCount'],
-        pictureCountUp : async function(id) {
-            await this.$store.dispatch('updateClickCount', id);
+        pictureCountUp : async function(picture) {
+            await this.$store.dispatch('updateClickCount', picture._id);
+            this.$router.push({ 'name' : 'PictureDetail', params : { 'picture' : picture } });
         },
         pictureListSort : function() {
         switch(this.checkValue) {

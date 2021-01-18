@@ -99,6 +99,16 @@ app.get('/logout', function(req, res, err) {
   res.status(200).json({ 'result' : 'success' });
 })
 
+fs.readdir(__dirname, (err, files) => {
+  if (err) res.status(500).json({'error' : err});
+
+  if (!files.includes('pictures')) {
+    fs.mkdir(path.join(__dirname, 'pictures'), (err) => {
+      if (err) res.status(500).json({'error' : err});
+    });
+  }
+});
+
 const picturePath = path.join(__dirname, 'pictures');
 
 let upload = multer({

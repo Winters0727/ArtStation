@@ -1,5 +1,7 @@
 var express = require('express');
 var router = express.Router();
+const fs = require('fs');
+const path = require('path');
 const User = require('../models/user');
 
 const { checkToken } = require('../utils/jwt');
@@ -11,6 +13,11 @@ router.post('/', async function(req, res, next) {
   // userInfo['userPassword'] = await hashPassword(req.body['userPassword']);
   await User.register(userInfo, userInfo['userPassword'])
   .then(() => {
+    const { userNickname } = userInfo;
+    const picFolderPath = path.join(__dirname, '..', 'pictures', userNickname);
+    fs.mkdir(picFolderPath, (err) => {
+      if (err) res.status(500).json({'error' : err});
+    });
     res.status(200).json({"result" : "success"});
   }).catch((err) => {
     res.status(500).json({"error" : err});
