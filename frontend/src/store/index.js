@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 
-import { registerRequest, loginRequest, logoutRequest, createRequest, getRequestWithoutToken } from '@/api/api'
+import { registerRequest, loginRequest, logoutRequest, createRequest, updateRequest, getRequestWithoutToken } from '@/api/api'
 // import { hashPassword } from '@/utils/index'
 
 Vue.use(Vuex)
@@ -10,13 +10,16 @@ export default new Vuex.Store({
   state: {
     user : null,
     token : null,
+    refreshToken : null,
   },
   mutations: {
     changeUser : function(state, payload) {
-      state.user = payload
+      state.user = payload;
     },
     registerToken : function(state, payload) {
-      state.token = payload
+      const { token, refreshToken } = payload;
+      state.token = token;
+      state.refreshToken = refreshToken;
     }
   },
   actions: {
@@ -59,6 +62,12 @@ export default new Vuex.Store({
         const userLikePic = userResponse.data[0].userLikePic;
         return userLikePic;
       }
+    },
+
+    async updateClickCount({ state }, payload) {
+      const pictureId = payload;
+      const response = await updateRequest('pictures/click', { _id : pictureId }, state.refreshToken);
+      return response.data;
     }
   },
   modules: {

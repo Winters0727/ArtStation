@@ -30,12 +30,11 @@ router.put('/', function(req, res, next) {
 
 // 사진 좋아요 누르기
 router.put('/like', async function(req, res, next) {
-  const userId = checkToken(req, res)["result"]["_id"]
-  const userInfo = await User.findById(userId);
-  userInfo['userLikePic'].push(req.body.picture);
-  User.findByIdAndUpdate(userId, userInfo).then(() => {
+  const userId = checkToken(req, res)["result"]["_id"];
+  User.findByIdAndUpdate(userId, {$push : { userLikePic : req.body.picture}}).then(() => {
     res.status(200).json({"result" : "success"});
   }).catch((err) => {
+    console.log(err);
     res.status(500).json({"error" : err});
   });
 });

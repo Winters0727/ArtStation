@@ -39,12 +39,21 @@ const Picture = require('../models/picture');
 
 // 그림 업데이트
 router.put('/', function(req, res, next) {
-    Picture.findByIdAndUpdate(req.body._id).then((result) => {
-        res.status(200).json(result);
-      }).catch((err) => {
-        res.status(500).json({"error" : err});
-      }); 
-    });
+  Picture.findByIdAndUpdate(req.body._id).then((result) => {
+      res.status(200).json(result);
+    }).catch((err) => {
+      res.status(500).json({"error" : err});
+    }); 
+  });
+
+// 클릭 수 업데이트
+router.put('/click', function(req, res, next) {
+  Picture.findByIdAndUpdate(req.body._id, {$inc : { clickCount : 1 }}).then((result) => {
+      res.status(200).json(result);
+    }).catch((err) => {
+      res.status(500).json({"error" : err});
+    }); 
+  });
 
 // 그림 삭제
 router.delete('/', function(req, res, next) {

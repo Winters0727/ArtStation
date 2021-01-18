@@ -104,7 +104,7 @@ data: () => ({
       await this.$store.commit('changeUser', result);
       this.user = this.$store.state.user;
       this.loginLinkList[1].to.params.userNickname = this.user.userNickname;
-      await this.$store.commit('registerToken', token);
+      await this.$store.commit('registerToken', { token : token, refreshToken : refreshToken });
     }
   }
 };

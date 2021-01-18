@@ -1,5 +1,14 @@
 <template>
-  <v-container class="mt-5 mb-3">
+  <v-container v-if="isLogin">
+    <v-row>
+        <v-spacer></v-spacer>
+        <div class="gallery-radiobox">
+            <v-radio-group v-model="checkValue">
+                <v-radio class="d-inline-block mx-3 gallery-checkbox" v-for="(box, index) in loginRadioboxList" :key="index" color="indigo"
+                :label="box.label" :value="box.value" @click="pictureListSort" />
+            </v-radio-group>
+        </div>
+    </v-row>
     <v-row>
       <v-col class="gallery-wrapper" cols=3 v-for="(picture, index) in pictureList" :key="index">
         <img
@@ -7,6 +16,29 @@
         :src="`${dbURL}/storage/${picture.filePath}`"
         :alt="picture.picTitle"
         :title="picture.picTitle"
+        @click="pictureCountUp(picture._id)"
+        />
+      </v-col>
+    </v-row>
+  </v-container>
+  <v-container v-else>
+    <v-row>
+    <v-spacer></v-spacer>
+    <div class="gallery-radiobox">
+        <v-radio-group v-model="checkValue">
+            <v-radio class="d-inline-block mx-3 gallery-checkbox" v-for="(box, index) in logoutRadioboxList" :key="index" color="indigo"
+            :label="box.label" :value="box.value" @click="pictureListSort" />
+        </v-radio-group>
+    </div>
+    </v-row>
+    <v-row>
+      <v-col class="gallery-wrapper" cols=3 v-for="(picture, index) in pictureList" :key="index">
+        <img
+        class="gallery-picture"
+        :src="`${dbURL}/storage/${picture.filePath}`"
+        :alt="picture.picTitle"
+        :title="picture.picTitle"
+        @click="pictureCountUp(picture._id)"
         />
       </v-col>
     </v-row>
@@ -16,12 +48,41 @@
 <script>
 import { mapActions } from 'vuex'
 
+import { isLogin } from '@/utils/index'
+
 export default {
     name : 'Gallery',
     data() {
         return {
             dbURL : process.env.VUE_APP_BACKEND_URL,
+            latestPictureList : null,
+            userLikePictureList : null,
             pictureList : null,
+            checkValue : 'Latest',
+            loginRadioboxList : [
+                {
+                    label : 'Latest',
+                    value : 'Latest'
+                },
+                {
+                    label : 'Popular',
+                    value : 'Popular'
+                },
+                {
+                    label : 'Like',
+                    value : 'Like',
+                }
+            ],
+            logoutRadioboxList : [
+                {
+                    label : 'Latest',
+                    value : 'Latest'
+                },
+                {
+                    label : 'Popular',
+                    value : 'Popular'
+                },
+            ],
         }
     },
 
@@ -30,16 +91,58 @@ export default {
     ],
 
     methods : {
-        ...mapActions['getPictures'],
+        ...mapActions['getPictures', 'updateClickCount'],
+        pictureCountUp : async function(id) {
+            await this.$store.dispatch('updateClickCount', id);
+        },
+        pictureListSort : function() {
+        switch(this.checkValue) {
+            case 'Latest':
+                this.pictureList = this.latestPictureList;
+                this.pictureList.sort((a,b) => new Date(b.createAt).getTime() - new Date(a.createAt).getTime());
+                break;
+            case 'Popular':
+                this.pictureList = this.latestPictureList;
+                this.pictureList.sort((a,b) => b.clickCount - a.clickCount);
+                break;
+            case 'Like':
+                this.pictureList = this.userLikePictureList;
+                this.pictureList.sort((a,b) => new Date(b.createAt).getTime() - new Date(a.createAt).getTime());
+                break;
+            default:
+                break;
+          }
+        }
+    },
+
+    computed : {
+        isLogin : isLogin,
     },
 
     async created() {
         if (this.user === 'None') {
-            this.pictureList = await this.$store.dispatch('getPictures', { userNickname : null, limit : 28 });
+            this.latestPictureList = await this.$store.dispatch('getPictures', { userNickname : null, limit : 28 });
         } else {
-            this.pictureList = await this.$store.dispatch('getPictures', { userNickname : this.user.userNickname, limit : 28 });
+            this.latestPictureList = await this.$store.dispatch('getPictures', { userNickname : null, limit : 28 });
+            this.userLikePictureList = await this.$store.dispatch('getPictures', { userNickname : this.user.userNickname, limit : 28 });
         }
+        this.pictureList = this.latestPictureList;
     },
+    updated() {
+        switch(this.checkValue) {
+        case 'Latest':
+            this.pictureList = this.latestPictureList;
+            break;
+        case 'Popular':
+            this.pictureList = this.latestPictureList;
+            break;
+        case 'Like':
+            this.pictureList = this.userLikePictureList;
+            break;
+        default:
+            break;
+        }
+    }
 }
 </script>
 
@@ -50,6 +153,11 @@ export default {
   -moz-transition: none !important;
   -ms-transition: none !important;
   -o-transition: none !important;
+}
+
+.gallery-radiobox {
+    font-family: 'Do Hyeon', sans-serif;
+    font-size: 0.8rem;
 }
 
 .gallery-wrapper {

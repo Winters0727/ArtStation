@@ -20,49 +20,25 @@ const registerRequest = function(data) {
 }
 
 const createRequest = function(resource, data) {
-  const token = this.$cookies.get('token');
-    return baseAPI.post(`/api/${resource}`, data, {
-      headers : {
-        'authorization' : token
-      },
-    });
+    return baseAPI.post(`/api/${resource}`, data);
   }
 
 const updateRequest = function(resource, data) {
-  const token = this.$cookies.get('token');
-    return baseAPI.put(`/api/${resource}`, data, {
-      headers : {
-        'authorization' : token
-      },
-    });
+    return baseAPI.put(`/api/${resource}`, data);
   }
 
 const deleteRequest = function(resource, data) {
-  const token = this.$cookies.get('token');
-    return baseAPI.delete(`/api/${resource}`, data, {
-      headers : {
-        'authorization' : token
-      },
-    });
+    return baseAPI.delete(`/api/${resource}`, data);
   }
 
 const getRequest = function(resource, options) {
-  const token = this.$cookies.get('token');
     return baseAPI.get(`/api/${resource}/option`, {
         params : options,
-        headers : {
-          'authorization' : token
-        },
     });
   }
 
   const getAllRequest = function(resource) {
-    const token = this.$cookies.get('token');
-    return baseAPI.get(`/api/${resource}`, {
-      headers : {
-        'authorization' : token
-      },
-    });
+    return baseAPI.get(`/api/${resource}`);
   }
 
   const getRequestWithoutToken = function(resource, options) {
